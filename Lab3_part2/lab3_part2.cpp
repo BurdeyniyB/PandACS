@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstdlib> // Додано для використання malloc та free
 
 using namespace std;
 
@@ -15,7 +16,7 @@ struct Department {
     // Деструктор для видалення всіх підвідділів
     ~Department() {
         for (Department* dept : subDepartments) {
-            delete dept;
+            free(dept); // Використовуємо free замість delete
         }
     }
 };
@@ -72,7 +73,8 @@ void addDepartment(Department* parentDept, string departmentsName) {
         cout << "Enter name for the new department: ";
         string name;
         cin >> name;
-        Department* newDept = new Department(name);
+        Department* newDept = (Department*)malloc(sizeof(Department)); // Використовуємо malloc 
+        new(newDept) Department(name); // Виклик конструктора через placement new
         // Додаємо новий відділ до підвідділів батьківського відділу
         parentDept->subDepartments.push_back(newDept);
         cout << "Department '" << name << "' added to '" << parentDept->name << "'" << endl;
@@ -100,8 +102,10 @@ void deleteDepartment(Department* parentDept, string departmentsName) {
             Department* deptToDelete = parentDept->subDepartments[index];
             // Видаляємо відділ з підвідділами
             parentDept->subDepartments.erase(parentDept->subDepartments.begin() + index);
-            // Звільняємо пам'ять, зайняту відділом і його підвідділами
-            delete deptToDelete;
+            // Викликаємо деструктор явно
+            deptToDelete->~Department();
+            // Звільняємо пам'ять, зайняту відділом
+            free(deptToDelete); // Використовуємо free 
             cout << "Department deleted successfully." << endl;
         } else {
             cout << "Invalid index." << endl;
@@ -119,7 +123,8 @@ void deleteDepartment(Department* parentDept, string departmentsName) {
 
 int main() {
     // Створюємо кореневий відділ підприємства
-    Department* root = new Department("Company");
+    Department* root = (Department*)malloc(sizeof(Department)); // Використовуємо malloc 
+    new(root) Department("Company"); // Виклик конструктора через placement new
 
     bool done = false;
     // Головний цикл програми
@@ -166,6 +171,6 @@ int main() {
     }
 
     // Звільняємо пам'ять, зайняту деревом відділів
-    delete root;
+    free(root); // Використовуємо free 
     return 0;
 }
