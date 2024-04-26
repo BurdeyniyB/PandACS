@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <queue>
 #include "Graph.cpp"
 #include "resArr.cpp"
 
@@ -11,10 +12,12 @@ const int ROWS = 15;
 const int COLS = 15;
 
 void showMaze(const string filename);
+void showVertexesInfo(Graph* graph);
 void readMatrixFromFile(int**& matrix, const string filename); // Pass matrix by reference
 void readNodesFromFile(resArr& startV, resArr& finishV, const string filename);
 void initialDynamicMatrix(int**& matrix); // Pass matrix by reference
 void deleteDynamicMatrix(int**& matrix); // Pass matrix by reference
+void BFS(Graph* graph);
 
 int main() {
     int** relationshipMatrix = nullptr; // Initialize pointers to nullptr
@@ -33,13 +36,11 @@ int main() {
     readNodesFromFile(startV, finishV, roleFileName);
 
     graph = new Graph(ROWS, relationshipMatrix, startV, finishV);
-    for(int i = 1; i <= ROWS; i++){
-        cout << graph->printNodes(i) << endl;
-    }
+    showVertexesInfo(graph);
+    BFS(graph);
+
     delete graph;
-
     deleteDynamicMatrix(relationshipMatrix);
-
     return 0;
 }
 
@@ -129,4 +130,18 @@ void showMaze(const string filename){
     } else {
         cerr << "Не вдалося відкрити файл для читання." << endl;
     }
+    cout<<endl;
+}
+
+void showVertexesInfo(Graph* graph){
+    for(int i = 1; i <= ROWS; i++){
+        cout << graph->printNodes(i) << endl;
+    }
+    cout<<endl;
+}
+
+void BFS(Graph* graph){
+    cout << "-------BFS start-------"<<endl;
+    graph->BFS(1);
+    cout << "-------BFS finish-------"<<endl;
 }

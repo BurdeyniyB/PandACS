@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include "resArr.cpp"
+#include "Linkedlist.cpp"
 
 using namespace std;
 
@@ -17,10 +18,11 @@ class Graph{
         Node() : neighbors(nullptr), countNodes(0), val(0), role('N') {} 
     };
 
-    Node* nodes = nullptr;
     int size; // Розмір графа
 
 public: 
+    Node* nodes = nullptr;
+
     Graph(int V, int** matrix, resArr startV, resArr finishV){
         int i, j;
         size = V;
@@ -28,15 +30,15 @@ public:
 
         for (i = 0; i < V; i++){
             nodes[i].neighbors = new Node*[V]; // Ініціалізація масиву вказівників
-            nodes[i].val = i;
+            nodes[i].val = i+1;
             for (j = 0; j < startV.getCurr(); j++)
             {
-                if(nodes[i].val == startV.getElem(j)-1){
+                if(nodes[i].val == startV.getElem(j)){
                     nodes[i].role = 'S';
                 }
             }
             for (j = 0; j < finishV.getCurr(); j++){
-                if(nodes[i].val == finishV.getElem(j)-1){
+                if(nodes[i].val == finishV.getElem(j)){
                     nodes[i].role = 'F';
                 }
             }
@@ -61,16 +63,59 @@ public:
         delete[] nodes;
     }
 
-    string printNodes(int V){
-        Node node = nodes[V-1];
-        string line = "";
-        line += "Vertex " + to_string(V) + "(" + string(1, nodes[V-1].role) + ")" + ":";
+    string printNodes(int numNode){
+        Node node; 
+        string line;
+
+        line = "";
+        line += "Vertex " + to_string(numNode) + "(" + string(1, nodes[numNode-1].role) + ")" + ":";
+
+        if(nodes != nullptr){
+            node = nodes[numNode-1];
+        }
+
         for(int i = 0; i < node.countNodes; i++){
-         if(node.neighbors[i] != nullptr) { // Перевірка на нульовий вказівник
+         if(node.neighbors[i] != nullptr) { 
              line += " " + to_string(node.neighbors[i]->val + 1);
          }
         }
      line += ";";
      return line;
+    }
+
+    void BFS(int numNode, int step = 0, Linkedlist* list = nullptr){
+        Node node; 
+        int i, t;
+        string line;
+
+        line = "";
+        for (i = 0; i < step; i++)
+        {
+           line += " ";
+        }
+        if(nodes != nullptr){
+            node = nodes[numNode-1];
+        }
+        line += to_string(node.val);
+        cout << line <<endl; 
+
+        if(list == nullptr){
+            list = new Linkedlist();
+        }
+
+        list->addTail(numNode);
+        list->printList();
+
+        if(node.neighbors != nullptr && node.countNodes > 1){
+            BFS(node.neighbors[1]->val + 1, ++step, list);
+        } else if(node.neighbors != nullptr && node.role == 'S'){
+            BFS(node.neighbors[0]->val + 1, ++step, list);
+        } else if(node.neighbors != nullptr && node.role == 'N'){
+            // while(node.countNodes >= list->lastTailPassage)
+            // t = list->lastTailVal();
+            // cout<<"last tail value "<< t <<endl;
+            // node = nodes[t-1];
+            // list->removedTail();
+        }
     }
 };
