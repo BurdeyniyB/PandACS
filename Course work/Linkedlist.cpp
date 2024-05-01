@@ -18,6 +18,7 @@ public:
         if (root == nullptr) {
             root = new Node();
             root->val = val;
+            root->passage = 1;
         }
         else {
             Node* n = root;
@@ -26,6 +27,7 @@ public:
             }
             n->next = new Node;
             n->next->val = val;
+            n->next->passage = 1;
         }
     }
     void addHead(int val) {
@@ -55,15 +57,24 @@ public:
             return val;
         }
     }
-    void removedTail(){
-        if (root != nullptr) {
-            Node* n = root;
-            while (n->next) {
-                n = n->next;
-            }
-            delete n;
+
+ void removedTail(){
+    if (root != nullptr) {
+        if (root->next == nullptr) { 
+            delete root;
+            root = nullptr;
+            return;
         }
+
+        Node* n = root;
+        while (n->next->next) { 
+            n = n->next;
+        }
+        delete n->next; 
+        n->next = nullptr; 
     }
+}
+
 
     int lastTailVal(){
         if(root != nullptr){
@@ -73,6 +84,7 @@ public:
          }
          return n->val;
         }
+        return -1;
     }
 
     int lastTailPassage(){
@@ -105,5 +117,18 @@ public:
         }
         cout<< n->val<<";"<<endl;
      }
+    }
+
+    int countList(){
+        if(root != nullptr){
+         int count = 1;
+         Node* n = root;
+         while (n->next) {
+            count++;
+            n = n->next;
+         }
+         return count;
+        }
+        return -1;
     }
 };
