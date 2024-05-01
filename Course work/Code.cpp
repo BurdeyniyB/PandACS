@@ -15,6 +15,7 @@ void showVertexesInfo(Graph* graph);
 void readRelationshipFromFile(Graph* graph, const string filename); // Pass matrix by reference
 void readNodesFromFile(resArr& startV, resArr& finishV, const string filename);
 void BFS(Graph* graph);
+void DFS(Graph* graph);
 
 int main() {
     string relationshipFileName, roleFileName, mazeFileName;
@@ -32,6 +33,7 @@ int main() {
     readRelationshipFromFile(graph, relationshipFileName);
     showVertexesInfo(graph);
     BFS(graph);
+    DFS(graph);
 
     delete graph;
     return 0;
@@ -114,4 +116,10 @@ void BFS(Graph* graph){
     cout << "-------BFS start-------"<<endl;
     graph->BFS(1);
     cout << "-------BFS finish-------"<<endl;
+}
+
+void DFS(Graph* graph){
+    cout<< "-------DFS start-------"<<endl;
+    graph->DFS(1);
+    cout << "-------DFS finish-------"<<endl;
 }

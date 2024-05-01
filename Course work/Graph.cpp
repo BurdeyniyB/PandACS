@@ -23,7 +23,8 @@ private:
 
     int size, countStrarts, countFinishes;
     Node *nodes = nullptr;
-    Linkedlist *finalLinkedList = nullptr;
+    Linkedlist* finalLinkedListBFS;
+    Linkedlist** LinkedListsDFS; 
 
 public:
     Graph(int V, resArr startV, resArr finishV)
@@ -148,24 +149,21 @@ public:
                 BFS(node.neighbors[list->lastTailPassage()]->val + 1, step, list);
             }
             else if (node.neighbors != nullptr && node.role == 'F')
-            {
-                if (finalLinkedList != nullptr)
-                {
-                    if (finalLinkedList->countList() > list->countList())
-                    {
-                        finalLinkedList = list;
-                        cout<<"Linkedlist is change"<<endl;
+            {  
+                if (finalLinkedListBFS != nullptr) {
+                    if (finalLinkedListBFS->countList() > list->countList()) {
+                    delete finalLinkedListBFS;
+                    finalLinkedListBFS = new Linkedlist(*list);
+                    cout << "Linkedlist has been changed" << endl;
                     }
-                }
-                else
-                {
-                    finalLinkedList = list;
-                }
-                
+                } else {
+                    finalLinkedListBFS = new Linkedlist(*list);
+            }
+
                 if (countFinishes == 1)
                 {
                     cout << "BFS:";
-                    finalLinkedList->printList();
+                    finalLinkedListBFS->printList();
                 }
                 else
                 {
@@ -182,6 +180,47 @@ public:
                     list->lastTailPlus();
                     BFS(node.neighbors[list->lastTailPassage()]->val + 1, step, list);
                 }
+            }
+        }
+    }
+
+    void DFS(int numNode, int step = 0, int currList = 0, int countLists = 1, Node *prevNode = nullptr){
+        Node node;
+        int i, t, p;
+        string line;
+
+        line = "";
+        for (i = 0; i < step; i++)
+        {
+            line += " ";
+        }
+                if (nodes != nullptr)
+        {
+            node = nodes[numNode - 1];
+            line += to_string(node.val);
+            cout << line << endl;
+
+            if(LinkedListsDFS == nullptr){
+                LinkedListsDFS = new Linkedlist*[1];
+                LinkedListsDFS[0] = new Linkedlist();
+            }
+
+            LinkedListsDFS[currList]->addTail(numNode);
+            LinkedListsDFS[currList]->printList();
+            if (node.neighbors != nullptr && node.countNodes == 2)
+            {
+                // int p = list->lastTailPassage();
+                // DFS(node.neighbors[1]->val + 1, ++step, list);
+            }
+            else if (node.neighbors != nullptr && node.role == 'S')
+            {
+                // DFS(node.neighbors[0]->val + 1, ++step, list);
+            }
+            else if(node.neighbors != nullptr && node.countNodes > 2)
+            {
+                countLists++;
+                Linkedlist** lists;
+                *lists = new Linkedlist[countLists];
             }
         }
     }

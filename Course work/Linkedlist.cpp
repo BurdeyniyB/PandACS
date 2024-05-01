@@ -12,8 +12,64 @@ class Linkedlist {
         int val;
         int passage;
     };
-    Node* root = nullptr;
 public:
+    Node* root = nullptr;
+
+    Linkedlist() {
+        root = nullptr;
+    }
+    
+    ~Linkedlist() {
+        while (root != nullptr) {
+            Node* temp = root;
+            root = root->next;
+            delete temp;
+        }
+    }
+
+        Linkedlist(const Linkedlist& other) {
+        if (other.root) {
+            root = new Node(*other.root); // Копіюємо перший вузол
+            Node* current = root;
+            Node* otherCurrent = other.root->next;
+            while (otherCurrent) {
+                current->next = new Node(*otherCurrent); // Копіюємо наступні вузли
+                current = current->next;
+                otherCurrent = otherCurrent->next;
+            }
+        }
+    }
+
+    // Оператор присвоєння
+    Linkedlist& operator=(const Linkedlist& other) {
+        if (this != &other) {
+            // Очищуємо поточий список
+            clear();
+            // Копіюємо вміст іншого списку
+            if (other.root) {
+                root = new Node(*other.root);
+                Node* current = root;
+                Node* otherCurrent = other.root->next;
+                while (otherCurrent) {
+                    current->next = new Node(*otherCurrent);
+                    current = current->next;
+                    otherCurrent = otherCurrent->next;
+                }
+            }
+        }
+        return *this;
+    }
+
+    void clear() {
+        Node* current = root;
+        while (current) {
+            Node* next = current->next;
+            delete current;
+            current = next;
+        }
+        root = nullptr;
+    }
+
     void addTail(int val) {
         if (root == nullptr) {
             root = new Node();
