@@ -27,7 +27,7 @@ public:
         }
     }
 
-        Linkedlist(const Linkedlist& other) {
+    Linkedlist(const Linkedlist& other) {
         if (other.root) {
             root = new Node(*other.root); // Копіюємо перший вузол
             Node* current = root;
@@ -40,7 +40,6 @@ public:
         }
     }
 
-    // Оператор присвоєння
     Linkedlist& operator=(const Linkedlist& other) {
         if (this != &other) {
             // Очищуємо поточий список
@@ -86,6 +85,7 @@ public:
             n->next->passage = 1;
         }
     }
+ 
     void addHead(int val) {
         if (root == nullptr) {
             root = new Node();
@@ -100,6 +100,7 @@ public:
             root = newRoot; 
         }
     }
+
     int removeHead() {
         if (!root) {
             cout << "Not found"<<endl;
@@ -114,7 +115,7 @@ public:
         }
     }
 
- void removedTail(){
+    void removedTail(){
     if (root != nullptr) {
         if (root->next == nullptr) { 
             delete root;
@@ -130,7 +131,6 @@ public:
         n->next = nullptr; 
     }
 }
-
 
     int lastTailVal(){
         if(root != nullptr){

@@ -13,13 +13,14 @@ const int COLS = 15;
 void showMaze(const string filename);
 void showVertexesInfo(Graph* graph);
 void readRelationshipFromFile(Graph* graph, const string filename); // Pass matrix by reference
-void readNodesFromFile(resArr& startV, resArr& finishV, const string filename);
+void readNodesFromFile(resArr& startV, resArr& finishV, resArr& obstacleV, const string filename);
 void BFS(Graph* graph);
 void DFS(Graph* graph);
+void dijkstra(Graph* graph);
 
 int main() {
     string relationshipFileName, roleFileName, mazeFileName;
-    resArr startV, finishV;
+    resArr startV, finishV, obstacleV;
     Graph* graph;
     
     relationshipFileName = "Database/relationship.txt";
@@ -27,13 +28,14 @@ int main() {
     mazeFileName = "Database/maze.txt";
     
     showMaze(mazeFileName);
-    readNodesFromFile(startV, finishV, roleFileName);
+    readNodesFromFile(startV, finishV, obstacleV, roleFileName);
 
-    graph = new Graph(ROWS, startV, finishV);
+    graph = new Graph(ROWS, startV, finishV, obstacleV);
     readRelationshipFromFile(graph, relationshipFileName);
     showVertexesInfo(graph);
     BFS(graph);
     DFS(graph);
+    dijkstra(graph);
 
     delete graph;
     return 0;
@@ -43,7 +45,7 @@ void readRelationshipFromFile(Graph* graph, const string filename) {
     ifstream file(filename);
     string line;
     char role;
-    int node, vertex, s, f;
+    int node, vertex, vertexWeight;
 
     if (file.is_open()) {
         getline(file, line);
@@ -53,7 +55,10 @@ void readRelationshipFromFile(Graph* graph, const string filename) {
                 iss.ignore(3);
                 while(iss){
                  iss >> vertex;
-                 graph->addNeighbors(node-1, vertex-1);
+                 iss.ignore(1);
+                 iss >> vertexWeight;
+                 iss.ignore(2);
+                 graph->addNeighbors(node-1, vertex-1, vertexWeight);
                  iss.ignore();
                 }
             } 
@@ -64,7 +69,7 @@ void readRelationshipFromFile(Graph* graph, const string filename) {
     }
 }
 
-void readNodesFromFile(resArr& startV, resArr& finishV, const string filename) {
+void readNodesFromFile(resArr& startV, resArr& finishV, resArr& obstacleV, const string filename) {
     ifstream file(filename);
     string line, role;
     int value;
@@ -81,6 +86,8 @@ void readNodesFromFile(resArr& startV, resArr& finishV, const string filename) {
                     startV.addElem(value);
                 } else if (role == "F") {
                     finishV.addElem(value);
+                } else if (role == "O") {
+                    obstacleV.addElem(value);
                 }
                 iss.ignore();
             }
@@ -114,12 +121,53 @@ void showVertexesInfo(Graph* graph){
 
 void BFS(Graph* graph){
     cout << "-------BFS start-------"<<endl;
-    graph->BFS(1);
+    for(int i = 0; i < ROWS; i++){
+        int numNode = graph->isStart(i);
+        if(numNode){
+            graph->BFS(numNode);
+        }
+    }
     cout << "-------BFS finish-------"<<endl;
 }
 
-void DFS(Graph* graph){
+void DFS(Graph* graph){ 
     cout<< "-------DFS start-------"<<endl;
-    graph->DFS(1);
+    for(int i = 0; i < ROWS; i++){
+        int numNode = graph->isStart(i);
+        if(numNode){
+            graph->DFS(numNode);
+        }
+    }
     cout << "-------DFS finish-------"<<endl;
+}
+
+void dijkstra(Graph* graph){
+    int choise;
+    cout<< "-------dijkstra start-------"<<endl;
+    cout<<"choise task:\n1.only distance\n2.chance survive\n3.without obstacles"<<endl;
+    cin >> choise;
+    switch (choise)
+    {
+    case 1:
+        cout<< "-------only distance start-------"<<endl;
+        graph->dijkstra();
+        graph->printFinishLength();
+        cout<< "-------only distance finish-------"<<endl;
+        break;
+    case 2:
+        cout<< "-------chance survive start-------"<<endl;
+        graph->dijkstra(1, 0);
+        graph->printFinishLength(1, 0);
+        cout<< "-------chance survive finish-------"<<endl;
+        break;
+    case 3:
+        cout<< "-------without obstacles start-------"<<endl;
+        graph->dijkstra(0, 1);
+        graph->printFinishLength(0, 1);
+        cout<< "-------without obstacles finish-------"<<endl;
+        break;
+    default:
+        break;
+    }
+    cout << "-------dijkstra finish-------"<<endl;
 }

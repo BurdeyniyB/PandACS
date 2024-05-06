@@ -38,5 +38,16 @@ public:
     int getElem(int numEl){
         return arr[numEl];
     }
+
+    int checkElem(int numEl){
+        int check = 0;
+        for (int i = 0; i < cap; ++i) {
+            if(arr[i] == numEl){
+                check = 1;
+                break;
+            }
+        }
+        return check;
+    }
 };
 #endif
